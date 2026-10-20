@@ -47,9 +47,9 @@ input,select,textarea{font-family:inherit;font-size:13px;outline:none}
 .new-dot{display:inline-block;font-size:10px;line-height:14px;padding:0 4px;border-radius:3px;background:rgba(15,180,160,.14);color:var(--teal);margin-left:4px;font-weight:600;vertical-align:1px}
 
 /* 演示控制（原型标注） */
-.demo-bar{display:flex;align-items:center;gap:14px;background:var(--bg-main);border:1px dashed var(--line-2);border-radius:4px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--tx-3)}
+.demo-bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;background:var(--bg-main);border:1px dashed var(--line-2);border-radius:4px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:var(--tx-3)}
 .demo-bar b{color:var(--tx)}
-.demo-bar label{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.demo-bar label{white-space:nowrap;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
 
 /* 筛选 */
 .card{background:transparent}
@@ -114,6 +114,7 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
 .mask{position:fixed;inset:0;background:var(--mask);display:none;align-items:center;justify-content:center;z-index:50}
 .mask.show{display:flex}
 .modal{background:var(--bg-modal);color:var(--tx);border-radius:2px;width:620px;max-height:92vh;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+#adlMask .modal{width:780px;max-width:calc(100vw - 32px)}
 .modal.wide{width:1100px}
 .modal.sm{width:440px}
 .m-hd{display:flex;justify-content:space-between;align-items:flex-start;padding:22px 22px 14px}
@@ -360,13 +361,11 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
       <table>
         <tr><th>类型</th><th>位置</th><th>说明</th><th>待确认</th></tr>
         <tr><td class="tag-add">新增</td><td>操作列「ADL减仓」按钮</td><td>和「平仓」并列。须<b>同时满足</b>：① ADL 指示灯亮满 5 格；② 未实现盈亏 &gt; 0（防止极端行情下亏损仓位也亮 5 格被误减）。不满足的置灰；同一仓位可多次减仓</td><td>✅ 指示灯 5 格 + 浮盈保护</td></tr>
-        <tr><td class="tag-add">新增</td><td>ADL 减仓弹窗</td><td>输入减仓数量（张 / 币）→ 预览成交价 / 预计已实现盈亏 / 剩余持仓 → 二次确认 → 执行（不填写减仓原因）</td><td>✅ Q1 不产生对手仓位，盈亏计入平台账户<br>✅ Q2 按执行时标记价成交<br>✅ Q3 被减仓用户不收手续费</td></tr>
-        <tr><td class="tag-add">新增</td><td>「ADL 档位」列</td><td>展示该仓位当前的 ADL 指示灯格数（与用户端看到的一致），支持排序，方便运营找到亮满 5 格的仓位</td><td>灯数沿用现有计算逻辑（原型为模拟数据）</td></tr>
+        <tr><td class="tag-add">新增</td><td>ADL 减仓弹窗</td><td>输入减仓数量（张）→ 预览成交价 / 预计已实现盈亏 / 剩余持仓 → 二次确认 → 执行（不填写减仓原因）</td><td>✅ Q1 不产生对手仓位，盈亏计入平台账户<br>✅ Q2 按执行时标记价成交<br>✅ Q3 按适用费率收取实际手续费</td></tr>
         <tr><td class="tag-mod">调整</td><td>「未实现盈亏」「回报率」列</td><td>支持点表头排序，方便运营找浮盈高的仓位</td><td>—</td></tr>
         <tr><td class="tag-mod">调整</td><td>「持仓量/可平量」列（已有）</td><td>表头可切换单位：张 / 币（币 = 张 × 合约面值，如 BTCUSDT 1 张 = 0.0001 BTC）；「自动减仓量」列跟随同一单位</td><td>—</td></tr>
-        <tr><td class="tag-add">新增</td><td>ADL 弹窗 · 减仓数量</td><td>输入框可切换 张 / 币，默认跟随列表当前单位；切换时自动换算已输入的数值；两种单位都支持小数</td><td>✅ 小数位数沿用各合约现有数量精度配置</td></tr>
+        <tr><td class="tag-add">新增</td><td>ADL 弹窗 · 减仓数量</td><td>输入单位固定为张；预览、确认、执行均以张数计算，价值 = 张数 × 合约面值 × 标记价格</td><td>✅ 小数位数沿用各合约现有数量精度配置</td></tr>
         <tr><td class="tag-mod">调整</td><td>「自动减仓量」列（已有）</td><td>记录该仓位累计被 ADL 减掉的数量，执行成功后实时累加</td><td>—</td></tr>
-        <tr><td class="tag-mod">调整</td><td>订单 ID 明细弹窗</td><td>只新增「操作人」一列：ADL 减仓记录显示执行的运营账号，用户自己下的单显示「--」；其余列不变</td><td>✅ Q5 单人操作，无需复核</td></tr>
         <tr><td class="tag-mod">调整</td><td>可减数量上限 / 挂单</td><td>上限按执行时的「持仓量」，超出则报错不执行；执行后该仓位的<b>全部平仓类挂单</b>（止盈止损、只减仓委托）一律撤销</td><td>✅ Q7 全部撤销</td></tr>
       </table>
     </div>
@@ -374,6 +373,9 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
 
   <div class="demo-bar">
     <b>🎛 演示控制</b>
+    <label>当前操作人员 <input id="operatorIn" value="admin_rhys" style="width:105px"></label>
+    <label>演示手续费率 <input id="feeRateIn" type="number" min="0" max="100" step="0.001" value="0.05" style="width:65px">%</label>
+    <span class="muted">演示费率；实际以服务端适用费率和成交实收为准</span>
     <span>执行结果模拟：</span>
     <label><input type="radio" name="sim" value="ok" checked> 成功</label>
     <label><input type="radio" name="sim" value="fail"> 执行失败</label>
@@ -413,7 +415,6 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
           <th class="sort" data-k="upnl">未实现盈亏(U)<i>⇅</i><span class="new-dot">排序</span></th>
           <th>已实现盈亏(U)</th>
           <th class="sort" data-k="roe">回报率<i>⇅</i><span class="new-dot">排序</span></th>
-          <th class="sort" data-k="light">ADL 档位<i>⇅</i><span class="new-dot">新增</span></th>
           <th>自动减仓量</th><th>账户类型</th><th>标签</th>
           <th class="sr" style="width:170px">操作</th>
         </tr></thead>
@@ -441,7 +442,7 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
   <table>
    <tr><th>编号</th><th>归属</th><th>待确认事项</th><th>当前原型做法</th></tr>
    <tr><td>P05</td><td>用户端</td><td>暂定不发任何通知；后续评估是否加发邮件</td><td>不发任何通知</td></tr>
-   <tr><td>P07</td><td>资金</td><td>全仓模式下 ADL 会不会让其他仓位的强平价变差？我的推导是「不会，只会变安全」，需研发确认计算口径</td><td>—</td></tr>
+   <tr><td>P07</td><td>资金</td><td>全仓按实际收取手续费后的钱包余额重算所有仓位的强平价格</td><td>—</td></tr>
    <tr><td>P14</td><td>中台</td><td>运营打开弹窗时仓位亮 5 格，到点「确认执行」时已掉到 4 格，或未实现盈亏已变为 ≤ 0：继续执行，还是报错拒绝</td><td>未处理（按打开时判断）</td></tr>
   </table>
  </div>
@@ -493,12 +494,17 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
         <label><span class="req">*</span>减仓数量</label>
         <div class="qty-box" id="qtyBox">
           <input id="qtyIn" class="num" placeholder="请输入要减仓的张数" autocomplete="off">
-          <select class="usel" id="mSel"><option value="张">张</option><option value="币">币</option><option value="U">USDT</option></select>
+          <span style="padding:0 12px;color:var(--muted)">张</span>
           <button class="all" onclick="fillAll()">全部</button>
         </div>
-        <div class="hint" id="qtyHint"></div>
-        <div class="hint" id="qtyConv" style="color:var(--blue)"></div>
         <div class="err-msg" id="qtyErr" hidden></div>
+      </div>
+      <div class="form-row">
+        <label>历史操作日志 <span class="muted" style="font-weight:normal">（当前仓位 · 全部操作人员）</span></label>
+        <div style="overflow:auto;max-height:200px;border:1px solid var(--line)">
+          <table class="sub-tbl" style="min-width:650px"><thead><tr><th>操作时间</th><th>操作人员</th><th>减仓数量（张）</th><th>操作结果</th><th>成交价格</th><th>实收手续费（U）</th></tr></thead><tbody id="operationLogs"></tbody></table>
+        </div>
+        <div class="hint">原型日志保存在本浏览器；正式环境由服务端按仓位汇总所有人员的记录。</div>
       </div>
       <div class="form-row">
         <label>执行预览</label>
@@ -533,7 +539,7 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:2900px;width:100%
     <div class="m-bd">
       <button class="btn btn-teal" style="margin-bottom:14px">导出</button>
       <table class="sub-tbl">
-        <thead><tr><th>序号</th><th>持仓 ID</th><th>订单 ID</th><th>下单方向</th><th>成交数量</th><th>价格</th><th>是否成交</th><th>成交均价</th><th>操作人<span class="new-dot">新增</span></th></tr></thead>
+        <thead><tr><th>序号</th><th>持仓 ID</th><th>订单 ID</th><th>下单方向</th><th>成交数量</th><th>价格</th><th>是否成交</th><th>成交均价</th></tr></thead>
         <tbody id="ordBody"></tbody>
       </table>
       <div class="pager"><span id="ordTotal"></span><span class="pg">|‹ « ‹ <b>1</b> › » ›|</span><span class="pg-size">20条/页 <span>▾</span></span><span>前往 <input class="pg-go" value="1"> 页</span></div>
@@ -552,7 +558,22 @@ const ZDEC=2; // 张数小数位：沿用合约现有数量精度配置（原型
 const cdec=sym=>ZDEC+Math.round(-Math.log10(SIZE[sym])); // 币数量小数位 = 张精度 × 面值
 const rz=x=>+(+x).toFixed(ZDEC);
 let listUnit='张',mUnit='张';
-const OPERATOR='admin_rhys';
+const operatorName=()=>$('operatorIn').value.trim()||'admin_rhys';
+const feeRate=()=>Math.max(0,Math.min(100,Number($('feeRateIn').value)||0))/100;
+const feeFor=(r,n,px)=>n*SIZE[r.sym]*px*feeRate();
+const escapeHtml=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let operationLogs=[];
+try{operationLogs=JSON.parse(localStorage.getItem('adl-operation-logs-v1')||'[]');if(!Array.isArray(operationLogs))operationLogs=[]}catch{}
+const nowText=()=>new Date().toLocaleString('sv-SE');
+function renderLogs(){
+ const logs=operationLogs.filter(l=>l.pid===curRow?.pid).slice().reverse();
+ $('operationLogs').innerHTML=logs.length?logs.map(l=>`<tr><td>${escapeHtml(l.time)}</td><td>${escapeHtml(l.operator)}</td><td>${escapeHtml(l.qty)} 张</td><td>${escapeHtml(l.result)}</td><td>${l.price==null?'--':fmt(l.price,PD[curRow.sym])}</td><td>${l.fee==null?'--':fmt(l.fee,8)}</td></tr>`).join(''):'<tr><td colspan="6" class="muted" style="text-align:center;padding:16px">暂无操作记录</td></tr>';
+}
+function recordOperation(r,n,operator,result,price=null,fee=null){
+ operationLogs.push({pid:r.pid,time:nowText(),operator,qty:n,result,price,fee});
+ try{localStorage.setItem('adl-operation-logs-v1',JSON.stringify(operationLogs))}catch{}
+ if(curRow)renderLogs();
+}
 
 let rows=[
   {uid:'11255508',sym:'BTCUSDT',pid:'565391542391423232',open:'2025-11-30 19:24:08',mm:'全仓',side:'L',entry:91207.09,qty:1,avail:1,lev:100,rpnl:-1.3547,adl:0,acct:'散户'},
@@ -585,7 +606,7 @@ const qn=(r,z,u)=>fq(z*per(r,u),udec(r,u));
 const ul=(r,u)=>u==='张'?'张':u==='币'?COIN[r.sym]:'USDT';
 const fl=(v,d)=>Math.floor(v*Math.pow(10,d)+1e-9)/Math.pow(10,d);
 const qt=(r,z,u)=>qn(r,z,u)+' '+ul(r,u);
-const qb=(r,z)=>`${qt(r,z,'张')}（${qt(r,z,'币')}）`;
+const qb=(r,z)=>qt(r,z,'张');
 const sgn=(n,d=4)=>(n>0?'+':'')+fmt(n,d);
 const cls=n=>n>0?'up':n<0?'down':'';
 /* ===== 计算口径：取自《账户字段公式》 =====
@@ -627,7 +648,7 @@ function render(){
   let list=view.slice();
   if(sortK){list.sort((a,b)=>(calc(a)[sortK]-calc(b)[sortK])*sortDir)}
   document.getElementById('total').textContent=`共 ${list.length} 条记录`;
-  if(!list.length){tb.innerHTML=`<tr><td colspan="27"><div class="state-box"><div style="font-size:30px">📭</div>暂无数据</div></td></tr>`;return}
+  if(!list.length){tb.innerHTML=`<tr><td colspan="26"><div class="state-box"><div style="font-size:30px">📭</div>暂无数据</div></td></tr>`;return}
   tb.innerHTML=list.map((r,i)=>{
     const c=calc(r),pd=PD[r.sym],canAdl=r.light===5&&c.upnl>0,why=r.light!==5?'ADL 指示灯亮满 5 格的仓位才可执行 ADL 减仓':'该仓位未实现盈亏 ≤ 0，不可执行 ADL 减仓';
     return `<tr data-pid="${r.pid}">
@@ -651,7 +672,6 @@ function render(){
       <td class="num ${cls(c.upnl)}">${sgn(c.upnl)}</td>
       <td class="num ${cls(r.rpnl)}">${sgn(r.rpnl)}</td>
       <td class="num ${cls(c.roe)}">${sgn(c.roe*100,2)}%</td>
-      <td class="num">${ltHtml(r.light)}</td>
       <td class="num ${r.adl?'adl-qty-hl':''}">${r.adl?qt(r,r.adl,listUnit):'0'}</td>
       <td>${r.acct}</td>
       <td class="muted">-- ✎</td>
@@ -672,7 +692,7 @@ document.querySelectorAll('.sort').forEach(th=>th.onclick=()=>{
 function query(){
   const sym=fSym.value,uid=fUid.value.trim(),pid=fPid.value.trim();
   const tb=document.getElementById('tbody');
-  tb.innerHTML=Array.from({length:6}).map(()=>`<tr class="skeleton">${Array.from({length:27}).map(()=>'<td><span class="bar"></span></td>').join('')}</tr>`).join('');
+  tb.innerHTML=Array.from({length:6}).map(()=>`<tr class="skeleton">${Array.from({length:26}).map(()=>'<td><span class="bar"></span></td>').join('')}</tr>`).join('');
   setTimeout(()=>{
     view=rows.filter(r=>(!sym||r.sym===sym)&&(!uid||r.uid.includes(uid))&&(!pid||r.pid.includes(pid)));
     render();
@@ -689,7 +709,7 @@ function openAdl(pid){
   curRow=rows.find(r=>r.pid===pid); if(!curRow)return;
   $('qtyIn').value='';
   $('qtyErr').hidden=true;$('execErr').hidden=true;$('qtyBox').classList.remove('err');
-  mUnit=listUnit;syncSeg('mSel',mUnit);
+  mUnit='张';renderLogs();
   fillInfo();updatePreview();show('adlMask');setTimeout(()=>$('qtyIn').focus(),50);
 }
 function fillInfo(){
@@ -701,21 +721,9 @@ function fillInfo(){
   $('adlInfo').innerHTML=[
     ['UID',r.uid],['合约',r.sym],['方向',`<span class="${r.side==='L'?'side-l':'side-s'}">${r.side==='L'?'多仓':'空仓'}</span> · ${r.mm} ${r.lev}x`],['持仓 ID',`<span class="num" style="font-size:11.5px">${r.pid}</span>`],
     ['开仓均价',`<span class="num">${fmt(r.entry,pd)}</span>`],['标记价格',`<span class="num">${fmt(c.mark,pd)}</span>`],['持仓量 / 可平量',ch(qtyCell(r.qty,r.avail),left===0?`<span class="num">0 / 0 ${ul(r,mUnit)}</span>`:qtyCell(left,left))],['累计已 ADL',`<span class="num">${qt(r,adl2,mUnit)}</span>`],
-    ['未实现盈亏',ch(`<span class="num ${cls(c.upnl)}">${sgn(c.upnl)} U</span>`,`<span class="num ${cls(up2)}">${sgn(up2)} U</span>`)],['回报率',`<span class="num ${cls(c.roe)}">${sgn(c.roe*100,2)}%</span>`],['已实现盈亏',ch(`<span class="num ${cls(r.rpnl)}">${sgn(r.rpnl)} U</span>`,`<span class="num ${cls(rp2)}">${sgn(rp2)} U</span>`)],['ADL 档位',ltHtml(r.light)],
+    ['未实现盈亏',ch(`<span class="num ${cls(c.upnl)}">${sgn(c.upnl)} U</span>`,`<span class="num ${cls(up2)}">${sgn(up2)} U</span>`)],['回报率',`<span class="num ${cls(c.roe)}">${sgn(c.roe*100,2)}%</span>`],['已实现盈亏',ch(`<span class="num ${cls(r.rpnl)}">${sgn(r.rpnl)} U</span>`,`<span class="num ${cls(rp2)}">${sgn(rp2)} U</span>`)],
   ].map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
-  const d=udec(r,mUnit),min=Math.pow(10,-ZDEC)*per(r,mUnit);
-  $('qtyIn').placeholder=mUnit==='张'?'请输入要减仓的张数':`请输入要减仓的 ${ul(r,mUnit)} 数量`;
-  $('qtyHint').innerHTML=`可减范围 ${fq(min,d)} ~ ${qt(r,r.qty,mUnit)}，最多 ${d} 位小数`+(mUnit==='U'?'（按当前标记价折算为张数，向下取整到合约精度）<span class="warn">⚠️ 折算规则待确认</span>':'（按合约数量精度配置）');
 }
-function setMUnit(u){
-  if(u===mUnit)return;
-  const r=curRow,raw=$('qtyIn').value.trim(),v=Number(raw);
-  if(raw!==''&&/^\d+(\.\d+)?$/.test(raw)&&v>0){
-    const z=v/per(r,mUnit);$('qtyIn').value=String(fl(z*per(r,u),udec(r,u)));
-  }
-  mUnit=u;syncSeg('mSel',u);fillInfo();updatePreview();
-}
-function syncSeg(id,u){const el=$(id);el.value=u;if(id==='mSel'&&curRow)el.querySelector('option[value="币"]').textContent=COIN[curRow.sym]}
 function fillAll(){const r=curRow;$('qtyIn').value=String(fl(r.qty*per(r,mUnit),udec(r,mUnit)));updatePreview()}
 function parseQty(){
   const raw=$('qtyIn').value.trim();
@@ -726,9 +734,7 @@ function parseQty(){
   if((raw.split('.')[1]||'').length>d)return{err:`${mUnit==='张'?'张数':ul(r,mUnit)+' 数量'}最多支持 ${d} 位小数`};
   const v=Number(raw);
   if(v<=0)return{err:'减仓数量须大于 0'};
-  let n;
-  if(mUnit==='U'){const fullV=fl(r.qty*per(r,'U'),UDEC);if(v>r.qty*per(r,'U')+1e-9)return{err:`超过当前持仓量 ${qt(r,r.qty,'U')}`};n=v>=fullV?r.qty:fl(v/per(r,'U'),ZDEC);if(n<=0)return{err:`按当前标记价折算不足最小数量 ${fq(Math.pow(10,-ZDEC),ZDEC)} 张`}}
-  else n=mUnit==='张'?rz(v):rz(v/SIZE[r.sym]);
+  const n=rz(v);
   if(n>r.qty)return{err:`超过当前持仓量 ${qt(r,r.qty,mUnit)}`};
   return{err:null,n};
 }
@@ -738,9 +744,9 @@ function updatePreview(){
   fillInfo();
   $('qtyErr').hidden=!err;$('qtyErr').textContent=err||'';$('qtyBox').classList.toggle('err',!!err);
   const ok=n&&!err;
-  const pnl=ok?dir*(c.mark-r.entry)*n*s:null;
+  const fee=ok?feeFor(r,n,c.mark):null;
+  const pnl=ok?dir*(c.mark-r.entry)*n*s-fee:null;
   const left=ok?rz(r.qty-n):null;
-  $('qtyConv').textContent=ok?(mUnit==='张'?`≈ ${qt(r,n,'币')}`:mUnit==='币'?`≈ ${qt(r,n,'张')}`:`按当前标记价折算为 ${qt(r,n,'张')}（${qt(r,n,'币')}）执行，实际减仓价值 ${fmt(n*s*c.mark)} USDT`):'';
   const val0=r.qty*s*c.mark,up0=c.upnl,rp0=r.rpnl;
   const val1=ok?left*s*c.mark:null,up1=ok?(r.qty?c.upnl*left/r.qty:0):null,rp1=ok?rp0+pnl:null;
   const cmp=(o,nv)=>`<span class="num"><span class="old">${o}</span><span class="ar">→</span><span class="new">${ok?nv:'--'}</span></span>`;
@@ -751,7 +757,7 @@ function updatePreview(){
     <div class="pr"><span class="k">本次减仓数量</span><span class="num">${ok?qb(r,n):'--'}</span></div>
     <div class="pr"><span class="k">本次减仓价值</span><span class="num">${ok?fmt(n*s*c.mark)+' U':'--'}</span></div>
     <div class="pr"><span class="k">本次减仓预估盈亏</span><span class="num ${ok?cls(pnl):''}">${ok?sgn(pnl)+' U':'--'}</span></div>
-    <div class="pr"><span class="k">手续费</span><span><span class="num">0.00 U</span> <span class="muted">（被减仓用户不收手续费）</span></span></div>
+    <div class="pr"><span class="k">手续费</span><span><span class="num">${ok?fmt(fee,8)+' U':'--'}</span> <span class="muted">（预估，按适用费率；以成交实收为准）</span></span></div>
     <div class="pv-h"><span>减仓后预估</span><span>当前 → 减仓后</span></div>
     <div class="pr"><span class="k">剩余持仓</span>${cmp(qb(r,r.qty),left===0?'<b style="color:var(--red)">0（全部平掉）</b>':qb(r,left))}</div>
     <div class="pr"><span class="k">剩余持仓价值</span>${cmp(fmt(val0)+' U',ok?fmt(val1)+' U':'')}</div>
@@ -776,34 +782,40 @@ function closeCfm(){hide('cfmMask')}
 
 function execute(){
   const sim=document.querySelector('input[name=sim]:checked').value;
+  const r=curRow,{n,err}=parseQty(),actor=operatorName();
+  if(err||!n)return;
+  const rate=feeRate();
   const btn=$('cfmBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> 执行中…';
   setTimeout(()=>{
     hide('cfmMask');
-    const r=curRow,{n}=parseQty();
     if(sim==='fail'){
+      recordOperation(r,n,actor,'失败：撮合服务超时');
       $('execErr').hidden=false;$('execErr').innerHTML='<b>执行失败</b>：撮合服务响应超时，本次未产生任何成交，仓位未变动。可稍后重试。';return;
     }
     if(sim==='gone'){
+      recordOperation(r,n,actor,'失败：仓位已不存在');
       rows=rows.filter(x=>x!==r);view=view.filter(x=>x!==r);closeAdl();render();
       toast('该仓位已不存在（已被用户平仓或强平），列表已刷新，本次未执行','err');return;
     }
     if(sim==='changed'){
+      recordOperation(r,n,actor,'失败：超过最新持仓量');
       r.qty=Math.max(0.01,rz(n/2));r.avail=Math.min(r.avail,r.qty);
       document.querySelector('input[name=sim][value=ok]').checked=true;
       fillInfo();updatePreview();render();
       $('execErr').hidden=false;$('execErr').innerHTML=`<b>执行失败</b>：减仓数量 ${qt(r,n,mUnit)} 大于该仓位当前持仓量 ${qt(r,r.qty,mUnit)}（仓位在此期间已变动），本次未执行。请重新输入。`;return;
     }
-    const c=calc(r),s=SIZE[r.sym],dir=r.side==='L'?1:-1,pnl=dir*(c.mark-r.entry)*n*s;
+    const c=calc(r),s=SIZE[r.sym],dir=r.side==='L'?1:-1,fee=n*s*c.mark*rate,pnl=dir*(c.mark-r.entry)*n*s-fee;
+    recordOperation(r,n,actor,'成功',c.mark,fee);
     const cancelled=rz(r.qty-r.avail);
-    r.orders.push({oid:String(BigInt(r.pid)+BigInt(r.orders.length*13+101)),dir:r.side==='L'?'卖出平多':'买入平空',type:'ADL减仓',qty:n,price:c.mark,avg:c.mark,op:OPERATOR,time:'2026-10-09 '+new Date().toTimeString().slice(0,8)});
+    r.orders.push({oid:String(BigInt(r.pid)+BigInt(r.orders.length*13+101)),dir:r.side==='L'?'卖出平多':'买入平空',type:'ADL减仓',qty:n,price:c.mark,avg:c.mark,op:actor,fee,time:nowText()});
     const rel=r.mm==='逐仓'?isoRelease(r,n,c.mark):0; if(r.mm==='逐仓')r.iso-=rel;
     CROSS_BAL[r.uid]=(CROSS_BAL[r.uid]||0)+pnl+rel; // 钱包余额 += 已实现盈亏；逐仓转出部分回到全仓
-    r.qty=rz(r.qty-n);r.avail=r.qty;r.adl=rz(r.adl+n);r.rpnl+=pnl;r.upd='2026-10-09 '+new Date().toTimeString().slice(0,8);
+    r.qty=rz(r.qty-n);r.avail=r.qty;r.adl=rz(r.adl+n);r.rpnl+=pnl;r.upd=nowText();
     const full=r.qty<=0;
     if(full){rows=rows.filter(x=>x!==r);view=view.filter(x=>x!==r)}
     const pid=r.pid;closeAdl();render();
     if(!full){const tr=document.querySelector(`tr[data-pid="${pid}"]`);tr&&tr.classList.add('flash')}
-    toast(full?`ADL 减仓成功：${qb(r,n)} @ ${fmt(c.mark,PD[r.sym])}，仓位已全部平掉，已从当前持仓移除`:`ADL 减仓成功：${qb(r,n)} @ ${fmt(c.mark,PD[r.sym])}，已实现盈亏 ${sgn(pnl)} U${cancelled?`，已撤销该仓位全部平仓挂单（${qt(r,cancelled,'张')}）`:''}`,'ok');
+    toast(full?`ADL 减仓成功：${qb(r,n)} @ ${fmt(c.mark,PD[r.sym])}，仓位已全部平掉，手续费 ${fmt(fee,8)} U，已从当前持仓移除`:`ADL 减仓成功：${qb(r,n)} @ ${fmt(c.mark,PD[r.sym])}，已实现盈亏 ${sgn(pnl)} U，手续费 ${fmt(fee,8)} U${cancelled?`，已撤销该仓位全部平仓挂单（${qt(r,cancelled,'张')}）`:''}`,'ok');
   },900);
 }
 
@@ -814,7 +826,7 @@ function openOrders(pid){
   $('ordBody').innerHTML=r.orders.map((o,i)=>`<tr>
     <td>${i+1}</td><td class="num">${pid}</td><td class="num">${o.oid}</td><td style="color:${o.dir.startsWith('买入')?'var(--up)':'var(--down)'}">${o.dir}</td>
     <td class="num">${fmt(o.qty,2)}</td><td class="num">${fmt(o.price,PD[r.sym])}</td><td>全部成交</td><td class="num">${fmt(o.avg,PD[r.sym])}</td>
-    <td>${o.op}</td></tr>`).join('');
+    </tr>`).join('');
   $('ordTotal').textContent=`共 ${r.orders.length} 条记录`;
   show('ordMask');
 }
@@ -831,7 +843,7 @@ const A={entry:82510.63,mark:88433.72,lev:10,cs:0.0001,q0:0.0108};
 A.im0=A.q0*A.entry/A.lev; // 开仓时逐仓保证金（逐仓余额）
 const AS={before:{z:108,light:5,ord:1},partial:{z:8,light:5,ord:0},full:{z:0,light:0,ord:0}};
 const ADLZ={partial:100,full:108};
-const TIP_U='<span class="tip">自动减仓（ADL）：系统按标记价格减少您的部分或全部仓位，本次减仓不收取手续费，减仓后您可随时重新开仓。<br><span class="u-warn">⚠️ 文案 / 客服口径待确认（Q9）</span></span>';
+const TIP_U='<span class="tip">自动减仓（ADL）：系统按标记价格减少您的部分或全部仓位，手续费按实际适用费率收取，以成交实收为准，减仓后您可随时重新开仓。<br><span class="u-warn">⚠️ 文案 / 客服口径待确认（Q9）</span></span>';
 let aState='before',aHTab='ord',uT='pos',uSub='lm';
 const af=(n,d=2)=>Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const bz=z=>+(z*A.cs).toFixed(6);
@@ -869,8 +881,8 @@ function aRender(){
   $('aBody').innerHTML=st.z?aCard(st):`<div class="ph-row"><span class="ph-tog"><i></i>隐藏其它合约</span></div><div class="ph-empty">📄<br><br>暂无持仓</div>`;
   const notes={
    before:`<b>① ADL 前</b>：持有 0.0108 BTC（逐仓 10x），挂 1 张止盈单（触发价 95,000）。App 指示灯<b>亮满 5 格</b>，所以中台可以对它执行 ADL。`,
-   partial:`<b>② 部分 ADL 后</b>（App 中虚线框为变化项）：持仓量 0.0108 → 0.0008 BTC（App 显示 955.08 → 70.75 USDT）；未实现盈亏只剩剩余部分；逐仓保证金按现有「减仓时逐仓保证金」规则转出（89.11 → 2.33 U，转出部分与已实现盈亏<b>立即回到交易账户可用</b>）；指示灯按现有逻辑重新计算（回报率、杠杆不变，示意仍为 5 格，可再次被减）；止盈单被撤，委托 1 → 0。开仓均价不变；收益率、预估强平价、保证金率按公式随剩余保证金重算（强平价 74,678 → 80,046）。<b>仓位区不加任何 ADL 标记</b>（R08），<b>不发站内信</b>（R09）；用户只能在历史委托 / 成交记录 / 仓位历史中看到「ADL」标签。`,
-   full:`<b>③ 全部 ADL 后</b>：仓位从当前持仓消失（Web / App 都显示「暂无持仓」）；止盈单被撤；ADL 记录只出现在历史委托 / 成交记录 / 仓位历史中。`};
+   partial:`<b>② 部分 ADL 后</b>（App 中虚线框为变化项）：持仓量 0.0108 → 0.0008 BTC（App 显示 955.08 → 70.75 USDT）；未实现盈亏只剩剩余部分；逐仓保证金按现有「减仓时逐仓保证金」规则转出（89.11 → 2.33 U，转出部分与已实现盈亏<b>立即回到交易账户可用</b>）；指示灯按现有逻辑重新计算（回报率、杠杆不变，示意仍为 5 格，可再次被减）；止盈单被撤，委托 1 → 0。开仓均价不变；收益率、预估强平价、保证金率按公式随剩余保证金重算（强平价 74,678 → 80,046）。<b>仓位区不加任何 ADL 标记</b>（R08），<b>不发站内信</b>（R09）；用户只能在历史委托中看到 ADL 记录和标签。`,
+   full:`<b>③ 全部 ADL 后</b>：仓位从当前持仓消失（Web / App 都显示「暂无持仓」）；止盈单被撤；ADL 记录和标签只出现在历史委托中。`};
   $('aNote').innerHTML=notes[aState];
   aHRender();uRender();
 }
@@ -879,28 +891,26 @@ function aHRender(){
   document.querySelectorAll('#aHTabs span').forEach(s=>s.classList.toggle('on',s.dataset.h===aHTab));
   const CH={ord:['类型','币种','日期'],pos:['币种','交易方向','日期'],flow:['币种','类型','日期'],fill:['币种','日期']};
   $('aChips').innerHTML=CH[aHTab].map(c=>`<span>${c}</span>`).join('');
-  const done=aState!=='before',z=ADLZ[aState]||0,q=bz(z),pnl=(A.mark-A.entry)*q,roe=pnl/A.im0*100,T='2026-10-09 13:40:12';
+  const done=aState!=='before',z=ADLZ[aState]||0,q=bz(z),pnl=(A.mark-A.entry)*q-q*A.mark*feeRate(),roe=pnl/A.im0*100,T='2026-10-09 13:40:12';
   const adlTag=t=>`<span class="adl-b" style="margin-left:2px">${t}</span>`;
   const kv=(k,v,cls='')=>`<div><div class="k">${k}</div><div class="v ${cls}">${v}</div></div>`;
   const prog=(lab,a,b,full)=>`<div class="k"><b>已成交</b>/总数量(${lab})</div><div class="prog"><span class="v">${a}/${b}</span><span class="bar2"><i style="width:${full?100:0}%"></i></span></div>`;
   const ordCard=(st,tags,progHtml,price,time)=>`<div class="tc"><div class="hd"><span>BTC_USDT</span><span class="st">${st}</span></div><div class="tags">${tags}</div>${progHtml}<div class="g2">${kv('委托价格',price)}${kv('委托时间',time)}</div></div>`;
   const openNotional=af(0.0108*A.entry,6).replace(/,/g,'');
   const H={};
-  H.ord=(done?ordCard('已成交','<span class="tg s">卖出</span><span class="tg">逐仓</span><span class="tg b">10x</span>'+adlTag('ADL'),prog('BTC',q,q,true),'--',T)
+  H.ord=(done?ordCard('已成交','<span class="tg s">卖出</span><span class="tg">逐仓</span><span class="tg b">10x</span>'+adlTag('ADL'),prog('张',z,z,true)+`<div class="g2">${kv('手续费 (USDT)',af(z*A.cs*A.mark*feeRate(),8))}</div>`,'--',T)
         +ordCard('已撤销 · 因 ADL','<span class="tg s">卖出</span><span class="tg">逐仓</span><span class="tg b">10x</span><span class="tg">止盈</span>',prog('USDT',0,'1026',false),'95000','2026-10-02 09:16:02'):'')
         +ordCard('已成交','<span class="tg b">买入</span><span class="tg">逐仓</span><span class="tg b">10x</span>',prog('USDT',openNotional,openNotional,true),'市价','2026-10-02 09:15:40');
   const posCard=(tags,cls,price,qty,pr,ot,ct)=>`<div class="tc"><div class="hd"><span>BTC_USDT</span></div><div class="tags">${tags}</div><div class="g2">${kv('平仓均价',price)}${kv('平仓数量',qty)}${kv('已实现盈亏/收益率',pr,cls)}${kv('开仓时间',ot)}${kv('平仓时间',ct)}</div></div>`;
-  H.pos=(done?posCard('<span class="tg b">多</span><span class="tg">逐仓</span><span class="tg b">10x</span>'+adlTag('ADL'),'a-up',A.mark.toFixed(2),q+' BTC',`+${pnl.toFixed(4)} / +${roe.toFixed(2)}%`,'2026-10-02 09:15:40',T):'')
-        +posCard('<span class="tg b">多</span><span class="tg">逐仓</span><span class="tg b">26x</span>','a-down','63978.49','176.259825 USDT','-2.1451 / -40.84%','2026-03-30 06:49:18','2026-06-04 08:24:51');
+  H.pos=posCard('<span class="tg b">多</span><span class="tg">逐仓</span><span class="tg b">26x</span>','a-down','63978.49','176.259825 USDT','-2.1451 / -40.84%','2026-03-30 06:49:18','2026-06-04 08:24:51');
   const flowCard=(amt,time,id)=>`<div class="tc"><div class="hd"><span>BTCUSDT</span></div><div class="g2">${kv('数量',amt+' USDT','a-down')}${kv('类型','资金费用')}${kv('时间',time)}${kv('成交ID',id)}</div></div>`;
   H.flow=flowCard('-0.0075','2026-10-09 08:00:00','679733940931543306')+flowCard('-0.0008','2026-10-09 00:00:00','679613146448544010');
   const fillCard=(tag,qty,fee,price,time,id)=>`<div class="tc"><div class="hd"><span>BTCUSDT${tag}</span></div><div class="g2">${kv('交易品种','BTCUSDT')}${kv('成交数量',qty)}${kv('手续费',fee)}${kv('成交价格',price)}${kv('时间',time)}${kv('成交ID',id)}</div></div>`;
-  H.fill=(done?fillCard(adlTag('ADL'),q+' BTC','0',af(A.mark),T,'678732191894668611'):'')
-        +fillCard('',openNotional+' USDT','0.4456',af(A.entry),'2026-10-02 09:15:40','678732191894668544');
+  H.fill=fillCard('',openNotional+' USDT','0.4456',af(A.entry),'2026-10-02 09:15:40','678732191894668544');
   $('aHBody').innerHTML=H[aHTab];
 }
 function uRender(){
-  const st=AS[aState],done=aState!=='before',z=ADLZ[aState]||0,q=bz(z),pnl=(A.mark-A.entry)*q,roe=pnl/A.im0*100,m=pm(st.z),T='2026-10-09 13:40:12',full=aState==='full';
+  const st=AS[aState],done=aState!=='before',z=ADLZ[aState]||0,q=bz(z),pnl=(A.mark-A.entry)*q-q*A.mark*feeRate(),roe=pnl/A.im0*100,m=pm(st.z),T='2026-10-09 13:40:12',full=aState==='full';
   const NM={pos:'当前持仓',open:'当前委托',phist:'历史仓位',hist:'历史委托',flow:'资金流水',fill:'历史成交'};
   document.querySelectorAll('#uTabs button').forEach(b=>{const t=b.dataset.t;b.classList.toggle('on',t===uT);b.innerHTML=NM[t]+(t==='pos'?`<span class="bdg">${st.z?1:0}</span>`:t==='open'?`<span class="bdg">${st.ord}</span>`:'')});
   const chip=t=>`<span class="adl-chip">${t} ⓘ${TIP_U}</span>`;
@@ -915,8 +925,7 @@ function uRender(){
   if(uT==='open'){h=st.ord?`<table class="wt"><thead><tr><th>合约名称</th><th>委托时间</th><th>成交数量/委托数量</th><th>委托价格</th><th>订单状态</th><th>订单 ID</th></tr></thead><tbody><tr>
      <td>${sym('开多')}</td><td>2026-10-02 09:16:02</td><td><span class="pct">0 张(0%)</span><br>108 张</td><td>止盈: <span class="up">95,000</span><br>止损: --</td><td>等待触发</td><td>${cp('678732202145783808')}</td></tr></tbody></table>`:empty('暂无委托')}
   if(uT==='phist'){
-    const adlRow=done?`<tr class="hl"><td>${sym('多')}${chip('ADL')}</td><td>${lev(10)}</td><td>2026-10-02 09:15:40<br>${T}</td><td>${af(A.entry)}<br>${af(A.mark)}</td>
-       <td class="up">+${pnl.toFixed(4)}<span class="ic">↗</span><br>(+${roe.toFixed(2)}%)</td><td>${q} BTC<br>0.0108 BTC</td></tr>`:'';
+    const adlRow='';
     h=`<table class="wt"><thead><tr><th>合约名称</th><th>仓位模式</th><th>开仓时间/平仓时间</th><th>开仓均价/平仓均价</th><th>已实现盈亏/盈亏率</th><th>已平仓量/持仓数量</th></tr></thead><tbody>${adlRow}
        <tr><td>${sym('多')}</td><td>${lev(26)}</td><td>2026-03-30 06:49:18<br>2026-06-04 08:24:51</td><td>65,000<br>63,978.49</td><td class="dn">-2.1451<span class="ic">↗</span><br>(-40.85%)</td><td>0.0021 BTC<br>0.0021 BTC</td></tr>
        <tr><td>${sym('空','s')}</td><td>${lev(26,'s')}</td><td>2026-03-02 10:57:00<br>2026-03-02 23:15:26</td><td>66,323.89<br>68,561.33</td><td class="dn">-2.2374<span class="ic">↗</span><br>(-87.7%)</td><td>0.001 BTC<br>0.001 BTC</td></tr></tbody></table>`}
@@ -924,7 +933,7 @@ function uRender(){
     const sub=`<div class="wsub">${[['lm','限价&市价'],['tpsl','止盈止损'],['plan','计划委托']].map(([k,n])=>`<button data-s="${k}" class="${k===uSub?'on':''}" onclick="uSub='${k}';uRender()">${n}</button>`).join('')}</div>`;
     let t='';
     if(uSub==='lm'){t=`<table class="wt"><thead><tr><th>合约名称</th><th>仓位模式</th><th>委托时间</th><th>订单类型</th><th>成交数量/委托数量</th><th>成交均价</th><th>触发条件</th><th>委托价格</th><th>平仓盈亏</th><th>手续费</th><th>订单状态</th><th>订单 ID</th><th>操作</th></tr></thead><tbody>
-       ${done?`<tr class="hl"><td>${sym('平多','s')}</td><td>${lev(10)}</td><td>${T}</td><td>${chip('ADL')}</td><td><span class="pct">${q} BTC(100%)</span><br>${q} BTC</td><td>${af(A.mark)}</td><td>--</td><td>--</td><td class="up">+${pnl.toFixed(4)}</td><td>0</td><td>全部成交</td><td>${cp('678732191894668611')}</td><td><button class="det">详情</button></td></tr>`:''}
+       ${done?`<tr class="hl"><td>${sym('平多','s')}</td><td>${lev(10)}</td><td>${T}</td><td>${chip('ADL')}</td><td><span class="pct">${z} 张(100%)</span><br>${z} 张</td><td>${af(A.mark)}</td><td>--</td><td>--</td><td class="up">+${pnl.toFixed(4)}</td><td>${af(z*A.cs*A.mark*feeRate(),8)}</td><td>全部成交</td><td>${cp('678732191894668611')}</td><td><button class="det">详情</button></td></tr>`:''}
        <tr><td>${sym('开多')}</td><td>${lev(10)}</td><td>2026-10-02 09:15:40</td><td>市价</td><td><span class="pct">108 张(100%)</span><br>108 张</td><td>${af(A.entry)}</td><td>--</td><td>市价</td><td>--</td><td>0.4456</td><td>全部成交</td><td>${cp('678732191894668544')}</td><td><button class="det">详情</button></td></tr></tbody></table>`}
     if(uSub==='tpsl'){t=done?`<table class="wt"><thead><tr><th>合约名称</th><th>委托时间</th><th>成交数量/委托数量</th><th>委托价格</th><th>订单状态</th><th>订单 ID</th></tr></thead><tbody>
        <tr class="hl"><td>${sym('开多')}</td><td>2026-10-02 09:16:02</td><td><span class="pct">0 张(0%)</span><br>108 张</td><td>止盈: <span class="up">95,000</span><br>止损: --</td><td>因 ADL 撤销</td><td>${cp('678732202145783808')}</td></tr></tbody></table>`:empty('暂无记录')}
@@ -934,7 +943,6 @@ function uRender(){
      <tr><td>2026-10-09 08:00:00</td><td>USDT</td><td class="dn">-0.00750000</td><td>资金费用</td><td>BTCUSDT</td><td>${cp('679733940931543306')}</td></tr>
      <tr><td>2026-10-09 00:00:00</td><td>USDT</td><td class="dn">-0.00080000</td><td>资金费用</td><td>BTCUSDT</td><td>${cp('679613146448544010')}</td></tr></tbody></table>`}
   if(uT==='fill'){h=`<table class="wt"><thead><tr><th>交易品种</th><th>成交价格</th><th>成交数量</th><th>手续费</th><th>时间</th><th>成交 ID</th></tr></thead><tbody>
-     ${done?`<tr class="hl"><td>BTCUSDT${chip('ADL')}</td><td>${af(A.mark)}</td><td>${q} BTC</td><td>0</td><td>${T}</td><td>${cp('678732192808960111')}</td></tr>`:''}
      <tr><td>BTCUSDT</td><td>${af(A.entry)}</td><td>108 张</td><td>0.4456</td><td>2026-10-02 09:15:40</td><td>${cp('678732192808960066')}</td></tr></tbody></table>`}
   $('uBody').innerHTML=h;
 }
@@ -945,7 +953,7 @@ aRender();
 document.querySelectorAll('#themeSw button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#themeSw button').forEach(x=>x.classList.toggle('on',x===b));document.body.classList.toggle('adm-dark',b.dataset.t==='dark')});
 function switchView(b){document.querySelectorAll('.view-switch > button').forEach(x=>x.classList.toggle('on',x===b));['viewAdmin','viewEnd'].forEach(id=>document.getElementById(id).hidden=id!==b.dataset.v)}
 $('listSel').onchange=e=>{listUnit=e.target.value;render()};$('listSel').onclick=e=>e.stopPropagation();
-$('mSel').onchange=e=>setMUnit(e.target.value);
+$('feeRateIn').oninput=()=>{if(curRow)updatePreview();aRender()};
 render();
 </script>
 </body>
