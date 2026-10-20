@@ -61,6 +61,11 @@
   .lb-x{position:absolute;top:14px;right:20px;color:#fff;font-size:30px;line-height:1;background:none;border:none;cursor:pointer;opacity:.8}
   .lb-x:hover{opacity:1}
   @media (max-width:760px){.doc{padding:28px 20px;margin:12px}.phones{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}}
+  .adl-cancel-rule{margin:20px 0 24px;padding:18px 22px;border:2px solid #f59e0b;border-left:6px solid #d97706;border-radius:10px;background:#fff7df;}
+  .adl-cancel-rule h2{margin:0 0 10px;padding:0;border:0;font-size:19px;color:#92400e;}
+  .adl-cancel-rule p{margin:7px 0;}
+  .adl-cancel-rule strong{color:#92400e;}
+  .adl-cancel-rule mark{background:#fde68a;color:#78350f;font-weight:800;padding:2px 4px;box-decoration-break:clone;}
   .toc{background:var(--pri-soft);border-radius:10px;padding:16px 22px;margin:18px 0 8px;font-size:14px;}
   .toc b{color:var(--dark);}
   .toc a{display:inline-block;margin:2px 14px 2px 0;color:var(--pri-deep);text-decoration:none;}
@@ -74,9 +79,17 @@
 
 <div class="cover">
   <h1>中台 ADL 减仓 PRD</h1>
-  <div class="ver">版本 V3.1 · 2026-10-20 · 修订人 Rhys</div>
+  <div class="ver">版本 V3.2 · 2026-10-20 · 修订人 Rhys</div>
   <div class="sub">需求类型：0→1 · 规模 L ｜ 配套原型：<a href="1009-中台ADL减仓.html">1009-中台ADL减仓.html</a> ｜ 规则来源：规则台账_ADL减仓 v1.0（R01–R19）</div>
 </div>
+
+<aside class="adl-cancel-rule" id="adl-cancel-rule" aria-labelledby="adl-cancel-title">
+  <h2 id="adl-cancel-title">重要规则｜ADL 撤单范围（R14）</h2>
+  <p><mark>执行 ADL 时，无论部分减仓还是全部平仓，均撤销被减仓位的全部平仓类挂单。</mark></p>
+  <p>包括该仓位的<strong>止盈止损、只减仓委托、平仓方向的限价单与计划委托</strong>。即使减仓数量小于挂单数量，相关平仓挂单也全部撤销，不按本次减仓数量部分保留。</p>
+  <p><strong>保留范围：</strong>同合约的开仓挂单、其他合约 / 其他仓位的挂单继续有效。</p>
+  <p style="font-size:13px;color:#92400e">详细规则见 <a href="#s3">3.3.5「当前委托」及 3.4「边界 Case」</a>。</p>
+</aside>
 
 <div class="toc">
   <b>目录</b><br>
@@ -501,6 +514,7 @@ flowchart LR
   <tr><td>V2.9</td><td>2026-10-13</td><td>初稿（评审前）</td><td>明确 ADL 撤单范围：只撤被减仓位的平仓类挂单，开仓挂单及其他仓位挂单保留（3.3.5「当前委托」、3.4 新增 #9-1）</td></tr>
   <tr><td>V3.0</td><td>2026-10-13</td><td>初稿（评审前）</td><td>维持 R14「ADL 后撤销被减仓位全部平仓类挂单」，3.4 补充小于 / 等于 / 大于挂单量三种情况；版本历史删除「变更原因」列</td></tr>
 <tr><td>V3.1</td><td>2026-10-20</td><td>评审更新</td><td>删除红框字段；仅张数输入；新增跨人员操作日志；按实际收费并扣减盈亏；仅历史委托保留 ADL 数据及标签；同步更新原型截图与计算示例</td></tr>
+  <tr><td>V3.2</td><td>2026-10-20</td><td>规则强调</td><td>将 R14 撤单规则提前至封面下方高亮展示：部分 / 全部 ADL 均撤销被减仓位全部平仓类挂单；保留开仓单和其他仓位挂单，范围不变</td></tr>
 </table>
 
 </div></div>
