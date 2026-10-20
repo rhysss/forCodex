@@ -79,7 +79,7 @@
 
 <div class="cover">
   <h1>中台 ADL 减仓 PRD</h1>
-  <div class="ver">版本 V3.2 · 2026-10-20 · 修订人 Rhys</div>
+  <div class="ver">版本 V3.3 · 2026-10-20 · 修订人 Rhys</div>
   <div class="sub">需求类型：0→1 · 规模 L ｜ 配套原型：<a href="1009-中台ADL减仓.html">1009-中台ADL减仓.html</a> ｜ 规则来源：规则台账_ADL减仓 v1.0（R01–R19）</div>
 </div>
 
@@ -111,7 +111,7 @@
 <table>
   <tr><th>角色</th><th>诉求</th><th>本期满足方式</th></tr>
   <tr><td>运营 / 风控（使用方）</td><td>按需减仓并追溯各人员操作</td><td>张数输入与执行预览；减仓数量下方展示所有人员的历史操作日志</td></tr>
-  <tr><td>被减仓用户（影响方）</td><td>了解减仓成交和实际费用</td><td>仅历史委托展示 ADL 数据、标签及说明；手续费按实际适用费率收取</td></tr>
+  <tr><td>被减仓用户（影响方）</td><td>了解减仓成交和实际费用</td><td>仅历史委托展示 ADL 数据及标签；手续费按实际适用费率收取</td></tr>
 </table>
 
 <h3>1.3 竞品分析</h3>
@@ -185,7 +185,7 @@ stateDiagram-v2
   <tr><td>二次确认与结果</td><td>二次确认、执行中、成功 / 失败反馈</td></tr>
   <tr><td>订单 ID 明细</td><td>删除新增的操作人列；操作追溯统一放在减仓弹窗的历史操作日志</td></tr>
   <tr><td rowspan="2">用户端（App / Web）</td><td>当前持仓 / 当前委托</td><td>无新增元素：仓位数量变少或消失，平仓类挂单被撤</td></tr>
-  <tr><td>历史委托（App / Web）</td><td>仅历史委托新增 ADL 数据、标签及说明，展示实际手续费；其余历史不新增 ADL 数据和标签</td></tr>
+  <tr><td>历史委托（App / Web）</td><td>仅历史委托新增 ADL 数据及标签，展示实际手续费；其余历史不新增 ADL 数据和标签</td></tr>
 </table>
 
 <h3>2.3 术语解释</h3>
@@ -254,7 +254,7 @@ stateDiagram-v2
   <tr><td>F5</td><td>中台</td><td>减仓数量下新增历史操作日志，记录所有人员；订单明细不新增操作人列</td><td>新增</td><td>P0</td></tr>
   <tr><td>F6</td><td>中台</td><td>「未实现盈亏」「回报率」支持排序</td><td><span class="tag-mod">调整</span></td><td>P1</td></tr>
   <tr><td>F7</td><td>中台</td><td>「持仓量/可平量」张 / 币 / USDT 切换，「自动减仓量」跟随</td><td><span class="tag-mod">调整</span></td><td>P1</td></tr>
-  <tr><td>F8</td><td>App / Web</td><td>仅历史委托显示 ADL 记录、标签、实收手续费和说明</td><td>调整</td><td>P0</td></tr>
+  <tr><td>F8</td><td>App / Web</td><td>仅历史委托显示 ADL 记录、标签及实收手续费</td><td>调整</td><td>P0</td></tr>
   <tr><td>F9</td><td>App / Web</td><td>其余历史不新增 ADL 数据与标签，保留原有普通记录</td><td>调整</td><td>P0</td></tr>
   <tr><td>F10</td><td>App / Web</td><td>被撤挂单显示「已撤销 · 因 ADL」</td><td><span class="tag-new">新增</span></td><td>P0</td></tr>
 </table>
@@ -373,7 +373,7 @@ flowchart LR
   <tr><td>交易历史（App）/ 历史成交（Web）</td><td colspan="2">不新增 ADL 数据或标签，移除原型中新增的 ADL 成交记录；已有普通成交记录保持原样。</td></tr>
   <tr><td>历史仓位（App / Web）</td><td colspan="2">不新增 ADL 数据或标签，移除原型中新增的 ADL 示例记录；普通仓位记录沿用既有规则，账户余额和当前持仓仍按实际成交更新。</td></tr>
   <tr><td>资金流水（App / Web）</td><td colspan="2"><strong>不改动</strong>。ADL 与普通平仓一样，不在资金流水中产生记录（R20）。</td></tr>
-  <tr><td>「ADL」标签说明</td><td colspan="2">Web 鼠标悬浮 / App 点击「ADL」标签时显示：「自动减仓（ADL）：系统按标记价格减少您的部分或全部仓位，手续费按实际适用费率收取，以成交实收为准，减仓后您可随时重新开仓。」<span class="tag-td">⚠️ P17 文案待确认</span></td></tr>
+  <tr><td>「ADL」标签</td><td colspan="2">仅展示「ADL」标签，不附加说明文字、信息图标、悬浮提示或点击弹层；App / Web 一致。</td></tr>
   <tr><td>通知</td><td colspan="2">本期不发站内信、邮件、短信、推送 <span class="tag-td">⚠️ P05</span></td></tr>
 </table>
 
@@ -420,7 +420,6 @@ flowchart LR
   <tr><td>E8</td><td>中台</td><td>二次确认操作</td><td>点击「返回修改」或「确认执行」</td><td>持仓 ID、选择结果</td></tr>
   <tr><td>E9</td><td>中台</td><td>ADL 执行结果</td><td>执行完成（成功或失败）</td><td>持仓 ID、UID、合约、结果、失败原因（超持仓量 / 仓位不存在 / 条件不满足 / 状态不支持 / 系统异常）、成交张数、成交价、适用费率、实收手续费、扣费后已实现盈亏、撤销挂单数量、是否全部减仓、操作人、耗时</td></tr>
   <tr><td>E10</td><td>中台</td><td>取消弹窗</td><td>点击「取消」/ 关闭弹窗</td><td>持仓 ID、是否已输入数量</td></tr>
-  <tr><td>E11</td><td>App / Web</td><td>查看 ADL 说明</td><td>Web 悬浮 / App 点击「ADL」标签的 ⓘ</td><td>端、所在页面（历史委托）、UID</td></tr>
   <tr><td>E12</td><td>App / Web</td><td>浏览含 ADL 记录的历史页</td><td>打开历史委托，且列表中有 ADL 记录</td><td>端、页面、UID、ADL 记录条数</td></tr>
 </table>
 
@@ -482,7 +481,6 @@ flowchart LR
   <tr><td>P14</td><td>执行时灯数不足 5 格或未实现盈亏 ≤ 0，是继续执行还是报错</td><td>报错拒绝</td><td>3.4 #12、5.2</td></tr>
   <tr><td>P15</td><td>仓位强平中、合约暂停交易 / 结算 / 下架时能否执行</td><td>拒绝执行</td><td>3.4 #13、5.2</td></tr>
   <tr><td>P16</td><td>哪些中台角色能看到和使用「ADL减仓」</td><td>与现有「平仓」按钮权限一致</td><td>3.3.1</td></tr>
-  <tr><td>P17</td><td>用户端「ADL」标签的说明文案</td><td>见 3.3.5，需 PM / 客服确认</td><td>3.3.5</td></tr>
   <tr><td>P18</td><td>历史展示范围</td><td>已确认：仅历史委托展示 ADL 数据及标签，其余历史不新增</td><td>3.3.5</td></tr>
   <tr><td>P21</td><td>数量输入单位</td><td>已确认：仅张，取消币 / USDT 输入与换算</td><td>3.3.2</td></tr>
 </table>
@@ -515,6 +513,7 @@ flowchart LR
   <tr><td>V3.0</td><td>2026-10-13</td><td>初稿（评审前）</td><td>维持 R14「ADL 后撤销被减仓位全部平仓类挂单」，3.4 补充小于 / 等于 / 大于挂单量三种情况；版本历史删除「变更原因」列</td></tr>
 <tr><td>V3.1</td><td>2026-10-20</td><td>评审更新</td><td>删除红框字段；仅张数输入；新增跨人员操作日志；按实际收费并扣减盈亏；仅历史委托保留 ADL 数据及标签；同步更新原型截图与计算示例</td></tr>
   <tr><td>V3.2</td><td>2026-10-20</td><td>规则强调</td><td>将 R14 撤单规则提前至封面下方高亮展示：部分 / 全部 ADL 均撤销被减仓位全部平仓类挂单；保留开仓单和其他仓位挂单，范围不变</td></tr>
+  <tr><td>V3.3</td><td>2026-10-20</td><td>展示调整</td><td>用户端仅展示 ADL 标签；删除标签说明、信息图标、悬浮 / 点击提示及对应埋点与待确认项</td></tr>
 </table>
 
 </div></div>
